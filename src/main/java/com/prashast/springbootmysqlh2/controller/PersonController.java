@@ -25,10 +25,23 @@ public class PersonController {
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "/getAll",produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/insertHugeData", method = RequestMethod.PUT)
+    public ResponseEntity insertHugeData(){
+        personService.insertThousandRecords();
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getAllViaJPA",produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<List<Person>> getAll(){
         List<Person> personList = personService.getAllPersons();
         return new ResponseEntity(personList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getAllInStreamingViaJPA",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseBodyEmitter> getAllInStreamingViaJPA(){
+        ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+        personService.getAllPersonsInStreamingviaJPA(emitter);
+        return new ResponseEntity(emitter, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getAllViaJdbc",produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
@@ -37,16 +50,18 @@ public class PersonController {
         return new ResponseEntity(personList, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/insertHugeData", method = RequestMethod.PUT)
-    public ResponseEntity insertHugeData(){
-        personService.insertThousandRecords();
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/getAllInStreaming", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @RequestMapping(value = "/getAllInStreamingViaJDBC", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<ResponseBodyEmitter> doStreaming(){
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
-        personService.getAllPersonsViaJdbcInStreaming(emitter);
+        personService.getAllPersonsInStreamingViaJdbc(emitter);
+
+        return new ResponseEntity<>(emitter, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getAllInStreamingOldFashion", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<ResponseBodyEmitter> getAllInStreamingOldFashion(){
+        ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+        personService.doStreamOldFashion(emitter);
 
         return new ResponseEntity<>(emitter, HttpStatus.OK);
     }

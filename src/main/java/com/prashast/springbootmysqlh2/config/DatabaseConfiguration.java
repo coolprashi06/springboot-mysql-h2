@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -26,9 +27,6 @@ public class DatabaseConfiguration {
     @Value("${spring.datasource.password}")
     private String password;
 
-    @Value("${spring.jpa.properties.hibernate.default_schema}")
-    private String schema;
-
     private DataSource dataSource;
 
     @Bean(name = "datasource")
@@ -38,7 +36,6 @@ public class DatabaseConfiguration {
         dataSource.setDriverClassName(driverClassName);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        dataSource.setSchema(schema);
 
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDataSource(dataSource);
